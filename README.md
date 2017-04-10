@@ -16,10 +16,13 @@ We also need to make decisions regarding scheduling of CUDA blocks and the unit 
 We will use the GHC machines.
 We will use starter code for Random Forest in C++.
 
-Someone did a [similar project](http://www.news.cs.nyu.edu/~jinyang/pub/biglearning13-forest.pdf)
+### Existing work
+- [Similar project](http://www.news.cs.nyu.edu/~jinyang/pub/biglearning13-forest.pdf)
+- [Random forest paper (Leo Breiman)](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf)
+- [Implementation of Random Forest in C++](http://mtv.ece.ucsb.edu/benlee/librf.html)
+- [sklearn implementation](http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)
+- [R implementation](https://cran.r-project.org/web/packages/randomForest/randomForest.pdf)
 
-[Random forest paper (Leo Breiman)](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf)
-[Implementation of Random Forest in C++](http://mtv.ece.ucsb.edu/benlee/librf.html)
 
 ## Goals and Deliverables
 Goal: create a random forest implementation that is competitive with sklearn and R implementations.
@@ -30,6 +33,7 @@ Reach goal: scale across multiple GHC machines.
 C++, CUDA
 
 Alternative: ISPC~
+
 ## Schedule
 ### April 10 - 16
 - Project proposal
