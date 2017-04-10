@@ -16,11 +16,10 @@ We also need to make decisions regarding scheduling of CUDA blocks and the unit 
 We will use the GHC machines.
 We will use starter code for Random Forest in C++.
 
-Someone did a similar project: http://www.news.cs.nyu.edu/~jinyang/pub/biglearning13-forest.pdf
+Someone did a [similar project](http://www.news.cs.nyu.edu/~jinyang/pub/biglearning13-forest.pdf)
 
-Random forest paper (Leo Breiman):
-https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf
-Implementation of Random Forest in C++: http://mtv.ece.ucsb.edu/benlee/librf.html
+[Random forest paper (Leo Breiman)](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf)
+[Implementation of Random Forest in C++](http://mtv.ece.ucsb.edu/benlee/librf.html)
 
 ## Goals and Deliverables
 Goal: create a random forest implementation that is competitive with sklearn and R implementations.
@@ -32,23 +31,24 @@ C++, CUDA
 
 Alternative: ISPC~
 ## Schedule
-April 10 - 16
-Project proposal
-Benchmark sklearn and R implementations
-Determine how to divide implementation into smaller tasks
-Implement/Adapt C++ code for Random Forest
+### April 10 - 16
+- Project proposal
+- Benchmark sklearn and R implementations
+- Determine how to divide implementation into smaller tasks
+- Implement/Adapt C++ code for Random Forest
 
-April 17 - 23
-Benchmarking framework for our code
-C++ implementation, parallelize bagging (but not training individual tree)
+### April 17 - 23
+- Benchmarking framework for our code
+- C++ implementation, parallelize bagging (but not training individual tree)
 
-April 24~ - 30
-Parallelize node splitting
+### April 24~ - 30
+- Parallelize node splitting
 
-May 1 - 7
-Parallelize tree levels
+### May 1 - 7
+- Parallelize tree levels
 
-May 8 - 12
-Final report
+### May 8 - 12
+- Final report
+
 ~Switch to ISPC by April 24th if we do not have sufficient progress on the CUDA implementation.
 
