@@ -1,5 +1,6 @@
 # Parallel Random Forest
-# Kirn Hans (khans) and Sally McNichols (smcnicho)
+
+## Kirn Hans (khans) and Sally McNichols (smcnicho)
 
 ## Summary
 We are going to implement random forest on the NVIDIA GPUs in the GHC labs.
