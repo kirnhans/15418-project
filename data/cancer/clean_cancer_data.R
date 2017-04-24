@@ -4,12 +4,12 @@ rm(list = ls())
 # Load the data.  NAs are coded as "?"
 # Data from: 
 # https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Original)
-dat <- read.csv('breast-cancer-wisconsin.data', 
+cancer <- read.csv('breast-cancer-wisconsin.data', 
                header = FALSE, 
                na.strings = "?")
 
 # Label the data fields.  Description and values are as noted.
-names(dat) = c(
+names(cancer) = c(
   'id', # Sample code number            id number
   'thickness', # Clump Thickness               1 - 10
   'size_uniformity', # Uniformity of Cell Size       1 - 10
@@ -24,17 +24,29 @@ names(dat) = c(
 )
 
 #Drop ID number, we don't want to use this for anything
-dat <- dat[,-1]
+cancer <- cancer[,-1]
 
 #Change outcome to be descriptive
 # 0 = benign, 1 = malignant
-dat$class <- ifelse(dat$class == 2, 0, 1)
+cancer$class <- ifelse(cancer$class == 2, 0, 1)
 
 # Make outcome a factor.
-dat$class <- as.factor(dat$class)
+cancer$class <- as.factor(cancer$class)
 
 # Drop missing data.
-dat <- dat[complete.cases(dat),]
+cancer <- cancer[complete.cases(cancer),]
 
 # Write data to csv file for easy use.
-write.csv(dat, file = "cancer.csv", row.names = FALSE)
+write.csv(cancer, file = "cancer.csv", row.names = FALSE)
+
+# Split data for training and testing. Use 75/25 train/test split.
+set.seed(1995)
+smp_size <- floor(0.75 * nrow(cancer))
+
+train_ind <- sample(seq_len(nrow(cancer)), size = smp_size)
+
+train <- cancer[train_ind, ]
+test <- cancer[-train_ind, ]
+
+write_csv(train, "cancer_train.csv")
+write_csv(test, "cancer_test.csv")
