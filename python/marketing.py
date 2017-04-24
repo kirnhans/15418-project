@@ -16,9 +16,6 @@ for p in ["job", "marital", "education", "default", "housing", "loan", "contact"
 	label_encoder = sklearn.preprocessing.LabelEncoder()
 	label_encoder.fit(train_df[p].unique())
 	train_df[p] = label_encoder.transform(train_df[p])
-
-	label_encoder = sklearn.preprocessing.LabelEncoder()
-	label_encoder.fit(test_df[p].unique())
 	test_df[p] = label_encoder.transform(test_df[p])
 
 cols = train_df.columns.values 
@@ -60,7 +57,7 @@ test_error = (test_predictions - test_df[target]) ** 2
 mse = test_error.mean()
 
 # Calculate misclassification rate on test data
-mis_rate = 1 - accuracy_score(test_df[target], [1 if y > 0.5 else 0 for y in test_predictions])
+mis_rate = 1 - accuracy_score(test_df[target], regr.predict(test_df[predictors]))
 
 # Print out summary
 print "**************sklearn random forest**************"
@@ -68,5 +65,5 @@ print "Marketing data:"
 print "Test MSE: " + str(mse)
 print "Test misclassification rate: " + str(mis_rate)
 print "Train time: " + str(train_time)
-print "Test time: " + str(test_time)
+print "Predict time: " + str(test_time)
 
