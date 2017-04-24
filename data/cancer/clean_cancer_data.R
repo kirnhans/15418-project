@@ -20,18 +20,18 @@ names(cancer) = c(
   'chromatin', # Bland Chromatin               1 - 10
   'nucleoli', # Normal Nucleoli               1 - 10
   'mitoses', # Mitoses                       1 - 10
-  'class' # Class:            (2 for benign, 4 for malignant)
+  'y' # Class:            (2 for benign, 4 for malignant)
 )
 
 #Drop ID number, we don't want to use this for anything
 cancer <- cancer[,-1]
 
-#Change outcome to be descriptive
+# Change outcome to be descriptive
 # 0 = benign, 1 = malignant
-cancer$class <- ifelse(cancer$class == 2, 0, 1)
+cancer$y <- ifelse(cancer$y == 2, 0, 1)
 
 # Make outcome a factor.
-cancer$class <- as.factor(cancer$class)
+cancer$y <- as.factor(cancer$y)
 
 # Drop missing data.
 cancer <- cancer[complete.cases(cancer),]
