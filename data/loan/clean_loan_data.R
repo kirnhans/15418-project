@@ -41,6 +41,9 @@ loan$y <- as.factor(ifelse(loan$loan_status == "Fully Paid" |
                                loan$loan_status == "In Grace Period" |
                                loan$loan_status == "Current", 0, 1))
 
+# Drop loan_status
+loan$loan_status <- NULL
+
 # Write clean data to csv file.
 write_csv(loan, "loan_clean.csv")
 
