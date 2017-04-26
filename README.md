@@ -64,38 +64,39 @@ Alternative: ISPC~
 We have implemented our testing and benchmarking frameworks. There are 3 main parts to our testing and benchmarking frameworks: random forest implementations in other languages for performance comparison, 3 different datasets for training/testing, and C++ timing code for our CUDA implementation. 
 
 The randomForest package in R and the RandomForestClassifier in sklearn are widely used random forest implementations, so we will be comparing the performance of these implementations to our CUDA implementation to assess the performance of our code. In addition, we have 3 different sized datasets to use for testing (16 KB, 4.6 MB, and 441.8 MB) to help test how well our code scales. We do not have code ready for benchmarking yet, but we do have C++ code prepared for timing our CUDA implementation when we are ready.
-Updated Schedule
 
 
-- Represent data in C++ -------- April 28th (Kirn) 
--- We need to do this first because we cannot train a decision tree without data.
--- Make sure that library/framework we use can read data from CSV file and allows us to randomly sample rows from the data to use in bootstrap aggregation.
+## Updated Schedule
 
-- Represent decision tree in C++ -------- April 28th (Sally)
--- In order to train decision trees, we need to represent them in some way.
--- Look into how cudaTree, R randomForest, and python sklearn represent decision trees/random forests in code
--- Make sure that this representation will be “CUDA friendly”
+* Represent data in C++ ________ April 28th (Kirn) 
+⋅⋅* We need to do this first because we cannot train a decision tree without data.
+⋅⋅* Make sure that library/framework we use can read data from CSV file and allows us to randomly sample rows from the data to use in bootstrap aggregation.
 
-- Write sequential code in CUDA kernel that trains a decision tree for a random forest. -------- April 30th (Sally)
--- Input: data random subset of data
--- Output: decision tree
+* Represent decision tree in C++ ________ April 28th (Sally)
+⋅⋅* In order to train decision trees, we need to represent them in some way.
+⋅⋅* Look into how cudaTree, R randomForest, and python sklearn represent decision trees/random forests in code
+⋅⋅* Make sure that this representation will be “CUDA friendly”
 
-- Parallelize bagging -------- May 2nd (Kirn)
--- Use sequential decision tree training code, but train decision trees in parallel.
+* Write sequential code in CUDA kernel that trains a decision tree for a random forest. ________ April 30th (Sally)
+⋅⋅* Input: data random subset of data
+⋅⋅* Output: decision tree
 
-- Parallelize node splitting -------- May 4th (Sally)
--- In the training a decision tree code, parallelize the part that decides when and how to split a node.
+* Parallelize bagging ________ May 2nd (Kirn)
+⋅⋅* Use sequential decision tree training code, but train decision trees in parallel.
 
-- Parallelize each level of a tree --------  May 7th (Kirn)
--- Train a tree so that each tree level is handled in parallel.
+* Parallelize node splitting ________ May 4th (Sally)
+⋅⋅* In the training a decision tree code, parallelize the part that decides when and how to split a node.
 
-- Finish final benchmarking for all code -------- May 8th (Kirn)
+* Parallelize each level of a tree ________  May 7th (Kirn)
+⋅⋅* Train a tree so that each tree level is handled in parallel.
 
-- Visualize performance data -------- May 8th (Sally)
+* Finish final benchmarking for all code ________ May 8th (Kirn)
 
-- Final presentation slideshow -------- May 12th (Kirn + Sally)
+* Visualize performance data ________ May 8th (Sally)
 
-- Final report -------- May 12th (Kirn + Sally)
+* Final presentation slideshow ________ May 12th (Kirn + Sally)
+
+* Final report ________ May 12th (Kirn + Sally)
 
 ## Progress With Respect To Goals
 
