@@ -68,35 +68,35 @@ The randomForest package in R and the RandomForestClassifier in sklearn are wide
 
 ## Updated Schedule
 
-* Represent data in C++ [April 28th (Kirn)]
+* Represent data in C++ **[April 28th (Kirn)]**
 	* We need to do this first because we cannot train a decision tree without data.
 	* Make sure that library/framework we use can read data from CSV file and allows us to randomly sample rows from the data to use in bootstrap aggregation.
 
-* Represent decision tree in C++ [April 28th (Sally)]
+* Represent decision tree in C++ **[April 28th (Sally)]**
 	* In order to train decision trees, we need to represent them in some way.
 	* Look into how cudaTree, R randomForest, and python sklearn represent decision trees/random forests in code
 	* Make sure that this representation will be “CUDA friendly”
 
-* Write sequential code in CUDA kernel that trains a decision tree for a random forest. [April 30th (Sally)]
+* Write sequential code in CUDA kernel that trains a decision tree for a random forest. **[April 30th (Sally)]**
 	* Input: data random subset of data
 	* Output: decision tree
 
-* Parallelize bagging [May 2nd (Kirn)]
+* Parallelize bagging **[May 2nd (Kirn)]**
 	* Use sequential decision tree training code, but train decision trees in parallel.
 
-* Parallelize node splitting [May 4th (Sally)]
+* Parallelize node splitting **[May 4th (Sally)]**
 	* In the training a decision tree code, parallelize the part that decides when and how to split a node.
 
-* Parallelize each level of a tree [May 7th (Kirn)]
+* Parallelize each level of a tree **[May 7th (Kirn)]**
 	* Train a tree so that each tree level is handled in parallel.
 
-* Finish final benchmarking for all code [May 8th (Kirn)]
+* Finish final benchmarking for all code **[May 8th (Kirn)]**
 
-* Visualize performance data [May 8th (Sally)]
+* Visualize performance data **[May 8th (Sally)]**
 
-* Final presentation slideshow [May 12th (Kirn + Sally)]
+* Final presentation slideshow **[May 12th (Kirn + Sally)]**
 
-* Final report [May 12th (Kirn + Sally)]
+* Final report **[May 12th (Kirn + Sally)]**
 
 ## Progress With Respect To Goals
 
