@@ -37,9 +37,24 @@ loan <- loan[complete.cases(loan),]
 
 # Add column that we are going to predict:
 # if loan is "bad" e.g. default
-loan$bad <- as.factor(ifelse(loan$loan_status == "Fully Paid" |
+loan$y <- as.factor(ifelse(loan$loan_status == "Fully Paid" |
                                loan$loan_status == "In Grace Period" |
                                loan$loan_status == "Current", 0, 1))
 
+# Drop loan_status
+loan$loan_status <- NULL
+
 # Write clean data to csv file.
 write_csv(loan, "loan_clean.csv")
+
+# Split data for training and testing. Use 75/25 train/test split.
+set.seed(1995)
+smp_size <- floor(0.75 * nrow(loan))
+
+train_ind <- sample(seq_len(nrow(loan)), size = smp_size)
+
+train <- loan[train_ind, ]
+test <- loan[-train_ind, ]
+
+write_csv(train, "loan_train.csv")
+write_csv(test, "loan_test.csv")
