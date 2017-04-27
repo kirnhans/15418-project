@@ -1,0 +1,15 @@
+#ifndef __PRF_H__
+#define __PRF_H__
+
+#include "DecisionTreeRepr.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+
+void build_trees(std::string data_filename, int thread_count, forest *data_forest);
+
+void bag(forest data_forest, solution *sol, int thread_count);
+
+
+
+#endif
