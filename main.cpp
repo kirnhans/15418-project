@@ -38,32 +38,31 @@ int main(int argc, char** argv) {
     int seed;
     forest data_forest;
 
-    if (argc == 9)
-    {
+    if (argc == 9) {
         thread_count = atoi(argv[4]);
-	n = atoi(argv[5]);
-	split_n = atoi(argv[6]);
-	leaf_n = atoi(argv[7]);
-	seed = atoi(argv[8]);
+      	n = atoi(argv[5]);
+      	split_n = atoi(argv[6]);
+      	leaf_n = atoi(argv[7]);
+      	seed = atoi(argv[8]);
     }
 
     std::string dataset_filename = argv[1];
     std::string testing_filename = argv[2];
     std::string answer_filename = argv[3];
 
-    //If we want to run on all threads
-    if (thread_count <= -1)
-    {
-      //Static assignment to get consistent usage across trials
+    // If we want to run on all threads
+    if (thread_count <= -1) {
+      // Static assignment to get consistent usage across trials
       int max_threads = 500; //arbitrary
 
-      //static num_threadss
+      // static num_threadss
       std::vector<int> num_threads;
 
-      //dynamic num_threads
+      // dynamic num_threads
       for (int i = 1; i < max_threads; i *= 2) {
-	num_threads.push_back(i);
+        num_threads.push_back(i);
       }
+
       num_threads.push_back(max_threads);
       int n_usage = num_threads.size();
 
@@ -73,8 +72,6 @@ int main(int argc, char** argv) {
       sol2.nodes = new sol_node[n];
 
       double base;
-      double build_tree_time;
-      double bagging_time;
       double training_time;
 
       double ref_base;
@@ -97,18 +94,10 @@ int main(int argc, char** argv) {
 	  printf("----------------------------------------------------------\n");
 	  std::cout << "Running with " << num_threads[i] << " threads\n";
 
-	  //Time building tree
+	  // Time training random forest
 	  start = CycleTimer::currentSeconds();
 	  build_trees(dataset_filename, &data_forest, thread_count);
-	  build_tree_time = CycleTimer::currentSeconds() - start;
-
-	  //Time bagging
-	  start = CycleTimer::currentSeconds();
-	  bag(data_forest, &sol1, thread_count);
-	  bagging_time = CycleTimer::currentSeconds() - start;
-
-	  training_time = build_tree_time + bagging_time;
-
+	  training_time = CycleTimer::currentSeconds() - start;
 
 	  start = CycleTimer::currentSeconds();
 	  test(data_forest, testing_filename, &sol1);
@@ -174,8 +163,6 @@ int main(int argc, char** argv) {
       sol2.nodes = new sol_node[n];
 
       double base;
-      double build_tree_time;
-      double bagging_time;
       double training_time;
 
       double ref_base;
@@ -194,18 +181,10 @@ int main(int argc, char** argv) {
       std::cout << "Running with " << thread_count << " threads" << std::endl;
 
 
-      //Time building
+      // Time training random forest
       start = CycleTimer::currentSeconds();
       build_trees(dataset_filename, &data_forest, thread_count);
-      build_tree_time = CycleTimer::currentSeconds() - start;
-
-      //Time bagging
-      start = CycleTimer::currentSeconds();
-      bag(data_forest, &sol1, thread_count);
-      bagging_time = CycleTimer::currentSeconds() - start;
-
-      training_time = build_tree_time + bagging_time;
-
+      training_time = CycleTimer::currentSeconds() - start;
 
       start = CycleTimer::currentSeconds();
       test(data_forest, testing_filename, &sol1);
@@ -214,12 +193,12 @@ int main(int argc, char** argv) {
       load_answer(answer_filename, &sol2);
       std::cout << "Testing Correctness \n";
       for (int j=0; j<sol1.num_nodes; j++) {
-	if (sol1.nodes[j].prediction != sol2.nodes[j].prediction) {
-	  fprintf(stderr, "*** Results disagree at %d: %d, %d\n", j,
-		  sol1.nodes[j].prediction, sol2.nodes[j].prediction);
-	  check = false;
-	  break;
-	}
+        if (sol1.nodes[j].prediction != sol2.nodes[j].prediction) {
+          fprintf(stderr, "*** Results disagree at %d: %d, %d\n", j,
+      		sol1.nodes[j].prediction, sol2.nodes[j].prediction);
+      	  check = false;
+      	  break;
+      	}
       }
 
       char buf[1024];
@@ -239,7 +218,7 @@ int main(int argc, char** argv) {
       timing << buf;
       ref_timing << ref_buf;
       if (!check)
-	std::cout << "Not Correct" << std::endl;
+      	std::cout << "Not Correct" << std::endl;
       printf("----------------------------------------------------------\n");
       std::cout << "Timing Summary" << std::endl;
       std::cout << timing.str();
@@ -248,7 +227,6 @@ int main(int argc, char** argv) {
       std::cout << ref_timing.str();
       printf("----------------------------------------------------------\n");
     }
-
 
     return 0;
 }
