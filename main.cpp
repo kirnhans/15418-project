@@ -7,7 +7,9 @@
 #include <sstream>
 #include <vector>
 
+#include "csv.h"
 #include "CycleTimer.h"
+
 #include "ParallelRandomForest.h"
 #include "DecisionTreeRepr.h"
 
