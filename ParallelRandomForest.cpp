@@ -12,14 +12,14 @@ void read_from_file(std:: string filename, int **subset, int M) {
   //None of this works because I'm still working out the details of how to not have three copies of the same code for different files
   //comment the function out to make it compile
   if (filename.find("cancer") != std::string::npos) {
-    int col_num = 1;
+    const int col_num = 1;
     int len = 172;
-    io::CSVReader<1> in(filename);
-    /* in.read_header(io::ignore_extra_column, "thickness","size_uniformity",
+    io::CSVReader<col_num> in(filename);
+    /*in.read_header(io::ignore_extra_column, "thickness","size_uniformity",
 		   "shape_uniformity","adhesion","size","nuclei","chromatin",
 		   "nucleoli","mitoses","y");
     */
-    in.read_header(io::ignore_extra_column, "thickness");
+    in.read_header(io::ignore_extra_column, "y");
     std::vector<int> random_index;
     for (int i = 0; i < M; i++) {
       //read in random lines into our array
@@ -29,12 +29,26 @@ void read_from_file(std:: string filename, int **subset, int M) {
       }
       while (contains(random_index, read_index));
       random_index.push_back(read_index);
+
+      //remove
+      read_index=i;
+
+
       //set line
-      in.set_file_line(read_index);
-      char *line = in.next_line();
+      //in.set_file_line(read_index);
+      //char *line = in.next_line();
+      int *cur = subset[i];
+      int a;
+      //in.read_row(a,cur[1],cur[2],cur[3],cur[4],cur[5],
+      //	   cur[6],cur[7],cur[8],cur[9]);
+      printf("a ini %d\n",a);
+      in.read_row(a);
+      printf("a %d\n", a);
+      /* printf("line number %d: ", read_index);
       for (int j = 0; j < col_num; j++) {
-	subset[i][j] = line[j];
+	printf("%d, ", subset[i][j]);
       }
+      printf("\n");*/
     }
   }
 
