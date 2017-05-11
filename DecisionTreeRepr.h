@@ -20,11 +20,12 @@ struct solution_tree {
 };
 
 struct dec_node {
-
+  int value;
+  int full;
   //REPRESENTATION HERE
 };
 
-struct dec_trees {
+struct dec_tree {
   struct dec_node *nodes;
   int num_nodes;
 };
