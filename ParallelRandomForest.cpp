@@ -10,29 +10,26 @@ using namespace std;
 #define contains(vec, elem) (find(vec.begin(), vec.end(), elem) != vec.end())
 
 //calling function should alloc and free subset
-//requires M < len
+//requires M <= len
 void read_from_file(std:: string filename, int **subset, int M) {
 
-  //None of this works because I'm still working out the details of how to not have three copies of the same code for different files
-  //comment the function out to make it compile
+  //build subset for the cancer file
   if (filename.find("cancer") != std::string::npos) {
 
     const int col_num = 10;
     int len = 513;
-    std::vector<int> random_index;
+
     for (int i = 0; i < M; i++) {
       subset[i] = new int[col_num];
 
       //read in random lines into our array
       int read_index;
-      do {
-	read_index = rand() % len;
-      }
-      while (contains(random_index, read_index));
-      random_index.push_back(read_index);
+      read_index = rand() % len;
 
-      //set line
-
+      //set line by opening file
+      //expensive but library doesn't allow random access
+      //apparently that's really hard for CSV
+      //todo maybe: do the reading of this in CUDA?
       io::CSVReader<col_num> in(filename);
       in.read_header(io::ignore_extra_column, "thickness","size_uniformity",
 		   "shape_uniformity","adhesion","size","nuclei","chromatin",
@@ -49,27 +46,21 @@ void read_from_file(std:: string filename, int **subset, int M) {
     }
   }
 
+  //do reading for loan dataset
   else if (filename.find("loan") != std::string::npos) {
 
     const int col_num = 17;
     int len = 665159;
-    std::vector<int> random_index;
     for (int i = 0; i < M; i++) {
       subset[i] = new int[col_num];
 
       //read in random lines into our array
-      int read_index;
-      do {
-	read_index = rand() % len;
-      }
-      while (contains(random_index, read_index));
-      random_index.push_back(read_index);
+      read_index = rand() % len;
 
-      //set line
-
+      //set line by opening file
+      //expensive but library doesn't allow random access
       io::CSVReader<col_num> in(filename);
       in.read_header(io::ignore_extra_column, "loan_amnt","funded_amnt","funded_amnt_inv","int_rate","installment","grade","sub_grade","annual_inc","dti","delinq_2yrs","inq_last_6mths","open_acc","pub_rec","revol_util","total_acc","initial_list_status","y");
-
 
       int *cur = subset[i];
       int line_count = in.get_file_line();
