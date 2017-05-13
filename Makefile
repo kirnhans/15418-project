@@ -4,7 +4,7 @@ CU_FILES   := train.cu test.cu
 
 CU_DEPS    :=
 
-CC_FILES   := main.cpp
+CC_FILES   := main.cpp DecisionTree.cpp DataReader.cpp
 
 all: $(EXECUTABLE)
 
@@ -20,7 +20,7 @@ NVCC=nvcc
 NVCCFLAGS=-O3 -m64 --gpu-architecture compute_35
 
 
-OBJS=$(OBJDIR)/main.o  $(OBJDIR)/train.o  $(OBJDIR)/test.o
+OBJS=$(OBJDIR)/main.o  $(OBJDIR)/DataReader.o  $(OBJDIR)/DecisionTree.o  $(OBJDIR)/train.o  $(OBJDIR)/test.o
 
 
 .PHONY: dirs clean

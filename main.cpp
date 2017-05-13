@@ -9,9 +9,8 @@
 
 #include "CycleTimer.h"
 #include "csv.h"
-
-void train(double* input, int n, int p);
-void test(double* input, int n, int p);
+#include "DecisionTree.h"
+#include "DataReader.h"
 
 int main(int argc, char** argv) {
     std::string train_file("data/cancer/cancer_train.csv");
@@ -37,51 +36,21 @@ int main(int argc, char** argv) {
     // Number of columns in data.
     int p = 10;
 
-    std::vector<double> train_data;
+    // Read in the training data
+    DataReader *train_reader = new DataReader();
+    train_reader->read(train_file);
 
-    io::CSVReader<10> in_train(train_file);
-    in_train.read_header(io::ignore_extra_column, "thickness", "size_uniformity",
-            "shape_uniformity", "adhesion", "size", "nuclei", "chromatin",
-            "nucleoli", "mitoses", "y");
-    double v1, v2, v3, v4, v5, v6, v7, v8, v9, v10;
-    while (in_train.read_row(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10)) {
-        train_data.push_back(v1);
-        train_data.push_back(v2);
-        train_data.push_back(v3);
-        train_data.push_back(v4);
-        train_data.push_back(v5);
-        train_data.push_back(v6);
-        train_data.push_back(v7);
-        train_data.push_back(v8);
-        train_data.push_back(v9);
-        train_data.push_back(v10);
-    }
+    // Convert the data into arrays for copying to the GPU.
+    double* train_data_arr = train_reader->data_arr();
+    int* train_y_arr = train_reader->label_arr();
 
-    std::vector<double> test_data;
-
-    io::CSVReader<10> in_test(test_file);
-    in_test.read_header(io::ignore_extra_column, "thickness", "size_uniformity",
-            "shape_uniformity", "adhesion", "size", "nuclei", "chromatin",
-            "nucleoli", "mitoses", "y");
-    while (in_test.read_row(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10)) {
-        test_data.push_back(v1);
-        test_data.push_back(v2);
-        test_data.push_back(v3);
-        test_data.push_back(v4);
-        test_data.push_back(v5);
-        test_data.push_back(v6);
-        test_data.push_back(v7);
-        test_data.push_back(v8);
-        test_data.push_back(v9);
-        test_data.push_back(v10);
-    }
-
-    // copy training data to device
-    double* train_arr = &train_data[0];
-
+    std::cout << "first elem: " << train_data_arr[0] << std::endl;
+    std::cout << "second elem: " << train_data_arr[1] << std::endl;
+    std::cout << "third elem: " << train_data_arr[2] << std::endl;
 
     double start_copy_time = CycleTimer::currentSeconds();
-    train(train_arr, n_train, p);
+    DecisionTree* tree = new DecisionTree(train_data_arr, train_y_arr, n_train, p - 1);
+    tree->train();
     double end_copy_time = CycleTimer::currentSeconds() - start_copy_time;
 
     std::cout << "copy to device time: " << end_copy_time << " seconds" << std::endl;
@@ -104,6 +73,9 @@ int main(int argc, char** argv) {
     printf("----------------------------------------------------------\n");
     std::cout << "Test time: " << test_time << " seconds" << std::endl;
     printf("----------------------------------------------------------\n");
+
+
+    delete tree;
 
     return 0;
 }
