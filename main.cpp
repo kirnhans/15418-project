@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "CycleTimer.h"
-
+# include "csv.h"
 
 int main(int argc, char** argv) {
     std::string train_file("data/cancer/cancer_train.csv");

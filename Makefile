@@ -14,7 +14,7 @@ LOGS	   := logs
 
 OBJDIR=objs
 CXX=g++ -m64
-CXXFLAGS=-O3 -Wall
+CXXFLAGS=-O3 -Wall -lpthread -std=c++11
 LDFLAGS=-L/usr/local/cuda/lib64/ -lcudart
 NVCC=nvcc
 NVCCFLAGS=-O3 -m64 --gpu-architecture compute_35
