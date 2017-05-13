@@ -50,7 +50,6 @@ int main(int argc, char** argv) {
 
     double start_copy_time = CycleTimer::currentSeconds();
     DecisionTree* tree = new DecisionTree(train_data_arr, train_y_arr, n_train, p - 1);
-    tree->train();
     double end_copy_time = CycleTimer::currentSeconds() - start_copy_time;
 
     std::cout << "copy to device time: " << end_copy_time << " seconds" << std::endl;

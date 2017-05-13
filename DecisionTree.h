@@ -7,9 +7,18 @@
 struct node {
     int split_var;
     double split_val;
-    double impurity;
+
     int size;
     int is_terminal;
+
+    // P(class = 0 | data) and P(class = 1 | data)
+    double p_0;
+    double p_1;
+
+    // Just use Gini impurity because that is what sklearn and randomForest use
+    // by default
+    double impurity;
+
     node* left;
     node* right;
 };
@@ -26,7 +35,6 @@ class DecisionTree {
                      int maxnodes);
 
         ~DecisionTree();
-        void train();
         double eval(double* new_data);
 
     private:
@@ -41,7 +49,10 @@ class DecisionTree {
 
         double* device_train_data;
         int* device_train_y;
+        int* device_data_idx;
 
+        void train();
+        void grow(node* t);
         void deleteTree(node* t);
         int* bootstrap();
         int* findSplit(int* data_weight, int* var_mask);
