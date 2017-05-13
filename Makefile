@@ -1,6 +1,6 @@
 EXECUTABLE := test
 
-CU_FILES   :=
+CU_FILES   := copyData.cu
 
 CU_DEPS    :=
 
@@ -20,7 +20,7 @@ NVCC=nvcc
 NVCCFLAGS=-O3 -m64 --gpu-architecture compute_35
 
 
-OBJS=$(OBJDIR)/main.o
+OBJS=$(OBJDIR)/main.o  $(OBJDIR)/copyData.o
 
 
 .PHONY: dirs clean
