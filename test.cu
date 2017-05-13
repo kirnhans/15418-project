@@ -6,7 +6,7 @@
 
 #include "CycleTimer.h"
 
-void copy_data(double* input, int n, int p) {
+void test(double* input, int n, int p) {
     int* device_input;
 
     cudaMalloc((void **)&device_input, sizeof(double) * n * p);

@@ -10,7 +10,8 @@
 #include "CycleTimer.h"
 #include "csv.h"
 
-void copy_data(double* input, int n, int p);
+void train(double* input, int n, int p);
+void test(double* input, int n, int p);
 
 int main(int argc, char** argv) {
     std::string train_file("data/cancer/cancer_train.csv");
@@ -80,7 +81,7 @@ int main(int argc, char** argv) {
 
 
     double start_copy_time = CycleTimer::currentSeconds();
-    copy_data(train_arr, n_train, p);
+    train(train_arr, n_train, p);
     double end_copy_time = CycleTimer::currentSeconds() - start_copy_time;
 
     std::cout << "copy to device time: " << end_copy_time << " seconds" << std::endl;

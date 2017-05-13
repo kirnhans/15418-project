@@ -1,6 +1,6 @@
-EXECUTABLE := test
+EXECUTABLE := cudaRF
 
-CU_FILES   := copyData.cu
+CU_FILES   := train.cu test.cu
 
 CU_DEPS    :=
 
@@ -20,7 +20,7 @@ NVCC=nvcc
 NVCCFLAGS=-O3 -m64 --gpu-architecture compute_35
 
 
-OBJS=$(OBJDIR)/main.o  $(OBJDIR)/copyData.o
+OBJS=$(OBJDIR)/main.o  $(OBJDIR)/train.o  $(OBJDIR)/test.o
 
 
 .PHONY: dirs clean
