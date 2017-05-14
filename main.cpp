@@ -48,20 +48,17 @@ int main(int argc, char** argv) {
     std::cout << "second elem: " << train_data_arr[1] << std::endl;
     std::cout << "third elem: " << train_data_arr[2] << std::endl;
 
-    double start_copy_time = CycleTimer::currentSeconds();
+    double start_train_time = CycleTimer::currentSeconds();
+
     DecisionTree* tree = new DecisionTree(train_data_arr, train_y_arr, n_train, p - 1);
-    double end_copy_time = CycleTimer::currentSeconds() - start_copy_time;
+    double train_time = CycleTimer::currentSeconds() - start_train_time;
 
-    std::cout << "copy to device time: " << end_copy_time << " seconds" << std::endl;
+    std::cout << "train time: " << train_time << " seconds" << std::endl;
 
-    // Time training random forest
+    std::cout << "decision tree depth: " << tree->count_levels() << std::endl;
+
+
     double start = CycleTimer::currentSeconds();
-
-    //build_trees(train_data);
-
-    double train_time = CycleTimer::currentSeconds() - start;
-
-    start = CycleTimer::currentSeconds();
     //test(data_forest, testing_filename);
     double test_time = CycleTimer::currentSeconds() - start;
 
@@ -72,7 +69,6 @@ int main(int argc, char** argv) {
     printf("----------------------------------------------------------\n");
     std::cout << "Test time: " << test_time << " seconds" << std::endl;
     printf("----------------------------------------------------------\n");
-
 
     delete tree;
 

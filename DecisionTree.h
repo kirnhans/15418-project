@@ -8,6 +8,7 @@ struct node {
     int split_var;
     double split_val;
 
+    int* data_mask;
     int size;
     int is_terminal;
 
@@ -36,6 +37,7 @@ class DecisionTree {
 
         ~DecisionTree();
         double eval(double* new_data);
+        int count_levels();
 
     private:
         double* train_data;
@@ -54,9 +56,7 @@ class DecisionTree {
         void train();
         void grow(node* t);
         void deleteTree(node* t);
-        int* bootstrap();
-        int* findSplit(int* data_weight, int* var_mask);
-        int* split(int* data_weight, int var, double val);
+        int count_help(node* t);
 };
 
 #endif
