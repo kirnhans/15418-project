@@ -14,57 +14,33 @@
 #define UPDIV(n, threadsPerBlock) ((n + threadsPerBlock - 1) / threadsPerBlock)
 
 // Use this function to allocate memory on device for all the attribute lists
-void init_attribute_list_memory(double*** attribute_value_list,
-                                int*** class_label_list,
-                                int*** rid_list,
-                                int n,
-                                int p) {
-    for (int i = 0; i < p; i++) {
-        cudaMalloc(attribute_value_list[i], n * sizeof(double));
-        cudaMalloc(class_label_list[i], n * sizeof(int));
-        cudaMalloc(rid_list[i], n * sizeof(int));
-    }
+void init_attribute_list_memory(double** attribute_value_list,
+                                int** class_label_list,
+                                int** rid_list,
+                                int n) {
+    cudaMalloc(attribute_value_list, n * sizeof(double));
+    cudaMalloc(class_label_list, n * sizeof(int));
+    cudaMalloc(rid_list, n * sizeof(int));
 }
-
-// Use this function to copy over the data to device
-void copy_data_to_device(double** device_input_data, double* input_data, int size) {
-    cudaMalloc(device_input_data, sizeof(double) * size);
-    cudaMemcpy(*device_input_data,
-               input_data,
-               sizeof(double) * size,
-               cudaMemcpyHostToDevice);
-}
-
-// Use this function to copy over the class labels to device
-void copy_data_to_device(int** device_input_data, int* input_data, int size) {
-    cudaMalloc(device_input_data, sizeof(int) * size);
-    cudaMemcpy(*device_input_data,
-               input_data,
-               sizeof(int) * size,
-               cudaMemcpyHostToDevice);
-}
-
 
 __global__ void kernel_data_to_attribute_lists(double* data,
                            int* labels,
                            int n,
                            int p,
-                           double** attribute_value_list,
-                           int** class_label_list,
-                           int** rid_list) {
+                           int p_idx,
+                           double* attribute_value_list,
+                           int* class_label_list,
+                           int* rid_list) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
 
     if (idx >= n) {
         return;
     }
 
-    for (int i = 0; i < p; i++) {
-        attribute_value_list[i][idx] = data[idx * p + i];
-        class_label_list[i][idx] = labels[idx];
-        rid_list[i][idx] = idx;
-    }
+    attribute_value_list[idx] = data[idx * p + p_idx];
+    class_label_list[idx] = labels[idx];
+    rid_list[idx] = idx;
 }
-
 
 void build_attribute_lists(double* data,
                            int* labels,
@@ -75,13 +51,17 @@ void build_attribute_lists(double* data,
                            int** rid_list) {
 
     const int blocks = UPDIV(N, THREADS_PER_BLOCK);
-    kernel_data_to_attribute_lists<<<blocks, THREADS_PER_BLOCK>>>(data,
-                                                                  labels,
-                                                                  n,
-                                                                  p,
-                                                                  attribute_value_list,
-                                                                  class_label_list,
-                                                                  rid_list);
+
+    for (int i = 0; i < p; i++) {
+        kernel_data_to_attribute_lists<<<blocks, THREADS_PER_BLOCK>>>(data,
+                                                                      labels,
+                                                                      n,
+                                                                      p,
+                                                                      i,
+                                                                      attribute_value_list[i],
+                                                                      class_label_list[i],
+                                                                      rid_list[i]);
+    }
     cudaThreadSynchronize();
 
     for (int i = 0; i < p; i++) {

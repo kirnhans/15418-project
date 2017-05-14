@@ -51,6 +51,7 @@ int main(int argc, char** argv) {
     double start_train_time = CycleTimer::currentSeconds();
 
     DecisionTree* tree = new DecisionTree(train_data_arr, train_y_arr, n_train, p - 1);
+    tree->train();
     double train_time = CycleTimer::currentSeconds() - start_train_time;
 
     std::cout << "train time: " << train_time << " seconds" << std::endl;

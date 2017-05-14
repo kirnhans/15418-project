@@ -33,7 +33,9 @@ __global__ void randoms(curandState_t* states, int* numbers) {
 }
 
 __global__ void make_sample(double* in_data,
+                            int* in_label,
                             double* out_data,
+                            int* out_label,
                             int* sample_idx,
                             int n,
                             int p) {
@@ -46,10 +48,19 @@ __global__ void make_sample(double* in_data,
     for (int i = 0; i < p; i++) {
         int row_idx = sample_idx[idx];
         out_data[idx * p + i] = in_data[row_idx * p + i];
+        out_label[idx] = in_label[row_idx];
     }
 }
 
-void bootstrap_sample(double* in_data, double** out_data, int n, int p) {
+void bootstrap_sample(double* in_data,
+                      int* in_label,
+                      double** out_data,
+                      int** out_label,
+                      int n,
+                      int p) {
+    cudaMalloc(out_data, sizeof(double) * n * p);
+    cudaMalloc(out_label, sizeof(int) * n);
+
     int* device_idx;
     curandState_t* states;
 
@@ -59,21 +70,15 @@ void bootstrap_sample(double* in_data, double** out_data, int n, int p) {
     init<<<N, 1>>>(time(0), states);
     randoms<<<N, 1>>>(states, device_idx);
 
-
     const int blocks = UPDIV(N, THREADS_PER_BLOCK);
-    make_sample<<<blocks, THREADS_PER_BLOCK>>>(in_data, *out_data, device_idx, n, p);
+    make_sample<<<blocks, THREADS_PER_BLOCK>>>(in_data,
+                                               in_label,
+                                               *out_data,
+                                               *out_label,
+                                               device_idx,
+                                               n,
+                                               p);
 
     cudaFree(device_idx);
-}
-
-void bootstrap_sample(int** device_nums) {
-    cudaMalloc(device_nums, sizeof(int) * N);
-    curandState_t* states;
-    cudaMalloc((void**) &states, sizeof(curandState_t) * N);
-
-    init<<<N, 1>>>(time(0), states);
-    randoms<<<N, 1>>>(states, *device_nums);
-
-    cudaFree(states);
 }
 

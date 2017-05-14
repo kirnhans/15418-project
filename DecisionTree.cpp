@@ -7,23 +7,28 @@
 
 void data_to_device(double** device_input_data, double* input_data, int size);
 void data_to_device(int** device_input_data, int* input_data, int size);
-void free_from_device(double* device_data);
 void free_from_device(int* device_data);
-void bootstrap_sample(int** device_nums);
-void init_data_mask(int** data_mask, int n, int val);
-void find_split(int* data_mask,
-                int* data_idx,
-                double* data,
-                int* label,
-                int n,
-                int p,
-                int** left_mask,
-                int** right_mask,
-                int* split_p_idx,
-                double* split_p_val,
-                double* split_gini,
-                int* split_left_count,
-                int* split_right_count);
+void free_from_device(double* device_data);
+
+void bootstrap_sample(double* in_data,
+                      int* in_label,
+                      double** out_data,
+                      int** out_label,
+                      int n,
+                      int p);
+
+void init_attribute_list_memory(double** attribute_value_list,
+                                int** class_label_list,
+                                int** rid_list,
+                                int n);
+
+void build_attribute_lists(double* data,
+                           int* labels,
+                           int n,
+                           int p,
+                           double** attribute_value_list,
+                           int** class_label_list,
+                           int** rid_list);
 
 DecisionTree::DecisionTree(double* train_data, int* train_y, int n, int p) :
                                                        train_data(train_data),
@@ -34,7 +39,6 @@ DecisionTree::DecisionTree(double* train_data, int* train_y, int n, int p) :
                                                        nodesize(1),
                                                        maxnodes(-1),
                                                        root(NULL) {
-    train();
 }
 
 
@@ -53,14 +57,10 @@ DecisionTree::DecisionTree(double* train_data,
                                    nodesize(nodesize),
                                    maxnodes(maxnodes),
                                    root(NULL) {
-    train();
 }
 
 
 DecisionTree::~DecisionTree() {
-    free_from_device(device_train_data);
-    free_from_device(device_train_y);
-    free_from_device(device_data_idx);
     deleteTree(root);
     return;
 }
@@ -69,8 +69,6 @@ void DecisionTree::deleteTree(node* t) {
     if (t == NULL) {
         return;
     }
-
-    free_from_device(t->data_mask);
 
     if(t->left != NULL) {
         deleteTree(t->left);
@@ -85,62 +83,55 @@ void DecisionTree::deleteTree(node* t) {
 }
 
 void DecisionTree::train() {
-    // Copy the training data to the device
-    //std::cout << "Start training" << std::endl;
+    double* device_data;
+    int* device_labels;
 
-    //std::cout << "Copy data to device" << std::endl;
-    data_to_device(&device_train_data, train_data, n * p);
-    data_to_device(&device_train_y, train_y, n);
+    data_to_device(&device_data, train_data, n * p);
+    data_to_device(&device_labels, train_y, n);
 
-    //std::cout << "Random sample the data" << std::endl;
-    // Find the indices of data we should train on.
-    bootstrap_sample(&device_data_idx);
 
-    root = new node();
-    root->size = n;
-    root->is_terminal = n > 1 ? 0 : 1;
-    init_data_mask(&root->data_mask, n, 1);
+    double* sample_data;
+    int* sample_labels;
+    bootstrap_sample(device_data,
+                     device_labels,
+                     &sample_data,
+                     &sample_labels,
+                     n,
+                     p);
 
-    //std::cout << "grow tree" << std::endl;
-    grow(root);
-}
+    double** attribute_value_list = new double*[p];
+    int** class_label_list = new int*[p];
+    int** rid_list = new int*[p];
 
-void DecisionTree::grow(node* t) {
-    if (t->is_terminal) {
-        return;
+    for (int i = 0; i < p; i++) {
+        init_attribute_list_memory(&attribute_value_list[i],
+                                   &class_label_list[i],
+                                   &rid_list[i],
+                                   n);
     }
 
-    node* left = new node();
-    node* right = new node();
+    build_attribute_lists(sample_data,
+                          sample_labels,
+                          n,
+                          p,
+                          attribute_value_list,
+                          class_label_list,
+                          rid_list);
 
-    find_split(t->data_mask,
-               device_data_idx,
-               device_train_data,
-               device_train_y,
-               n,
-               p,
-               &left->data_mask,
-               &right->data_mask,
-               &t->split_var,
-               &t->split_val,
-               &t->impurity,
-               &left->size,
-               &right->size);
-
-
-    t->left = left;
-    t->right = right;
-
-    if (left->size <= nodesize || t->impurity < 0.0000001) {
-        left->is_terminal = 1;
+    for (int i = 0; i < p; i++) {
+        free_from_device(attribute_value_list[i]);
+        free_from_device(class_label_list[i]);
+        free_from_device(rid_list[i]);
     }
 
-    if (right->size <= nodesize || t->impurity < 0.0000001) {
-        right->is_terminal = 1;
-    }
+    delete[] attribute_value_list;
+    delete[] class_label_list;
+    delete[] rid_list;
 
-    grow(left);
-    grow(right);
+    free_from_device(sample_data);
+    free_from_device(sample_labels);
+    free_from_device(device_data);
+    free_from_device(device_labels);
 }
 
 int DecisionTree::count_help(node* t) {
