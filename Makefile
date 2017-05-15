@@ -1,6 +1,6 @@
 EXECUTABLE := cudaRF
 
-CU_FILES   := train.cu test.cu build_attribute_list.cu sample.cu split_point_find.cu
+CU_FILES   := train.cu test.cu build_attribute_list.cu sample.cu split_point_find.cu split_lists.cu
 
 CU_DEPS    :=
 
@@ -20,7 +20,7 @@ NVCC=nvcc
 NVCCFLAGS=-O3 -m64 --gpu-architecture compute_35
 
 
-OBJS=$(OBJDIR)/main.o  $(OBJDIR)/DataReader.o  $(OBJDIR)/DecisionTree.o  $(OBJDIR)/train.o  $(OBJDIR)/test.o  $(OBJDIR)/build_attribute_list.o $(OBJDIR)/sample.o  $(OBJDIR)/split_point_find.o
+OBJS=$(OBJDIR)/main.o  $(OBJDIR)/DataReader.o  $(OBJDIR)/DecisionTree.o  $(OBJDIR)/train.o  $(OBJDIR)/test.o  $(OBJDIR)/build_attribute_list.o $(OBJDIR)/sample.o  $(OBJDIR)/split_point_find.o  $(OBJDIR)/split_lists.o
 
 
 .PHONY: dirs clean
