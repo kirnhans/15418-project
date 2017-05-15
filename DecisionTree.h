@@ -5,8 +5,8 @@
 #define DECISIONTREE_H
 
 struct node {
-    int split_var;
-    double split_val;
+    int split_var_idx;
+    int split_val_idx;
 
     int size;
     int is_terminal;
@@ -18,6 +18,10 @@ struct node {
     // Just use Gini impurity because that is what sklearn and randomForest use
     // by default
     double impurity;
+
+    double** attribute_value_list;
+    int** class_label_list;
+    int** rid_list;
 
     node* left;
     node* right;
@@ -49,9 +53,10 @@ class DecisionTree {
         int maxnodes;
         node *root;
 
-        double* device_train_data;
-        int* device_train_y;
-        int* device_data_idx;
+        double* device_data;
+        int* device_labels;
+
+
         void grow(node* t);
         void deleteTree(node* t);
         int count_help(node* t);
