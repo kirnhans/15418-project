@@ -78,7 +78,7 @@ void bootstrap_sample(double* in_data,
                                                device_idx,
                                                n,
                                                p);
-
+    cudaThreadSynchronize();
     cudaFree(device_idx);
 }
 

@@ -83,6 +83,5 @@ void build_attribute_lists(double* data,
 
         thrust::stable_sort(thrust_attribute_value,
                             thrust_attribute_value + n);
-
     }
 }

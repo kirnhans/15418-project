@@ -30,6 +30,16 @@ void build_attribute_lists(double* data,
                            int** class_label_list,
                            int** rid_list);
 
+void find_split(double** attribute_value_list,
+                int** class_label_list,
+                int** rid_list,
+                int n,
+                int p,
+                int* best_attr,
+                int* split_idx,
+                double* best_gini);
+
+
 DecisionTree::DecisionTree(double* train_data, int* train_y, int n, int p) :
                                                        train_data(train_data),
                                                        train_y(train_y),
@@ -89,7 +99,7 @@ void DecisionTree::train() {
     data_to_device(&device_data, train_data, n * p);
     data_to_device(&device_labels, train_y, n);
 
-
+    // Get a random sample of the data.
     double* sample_data;
     int* sample_labels;
     bootstrap_sample(device_data,
@@ -110,6 +120,8 @@ void DecisionTree::train() {
                                    n);
     }
 
+    // Build attribute lists.
+    /*
     build_attribute_lists(sample_data,
                           sample_labels,
                           n,
@@ -118,6 +130,36 @@ void DecisionTree::train() {
                           class_label_list,
                           rid_list);
 
+    // TODO change back to sample after debugging
+*/
+    build_attribute_lists(device_data,
+                          device_labels,
+                          n,
+                          p,
+                          attribute_value_list,
+                          class_label_list,
+                          rid_list);
+
+
+    int best_attr_idx;
+    int val_idx;
+    double best_gini;
+
+    find_split(attribute_value_list,
+               class_label_list,
+               rid_list,
+               n,
+               p,
+               &best_attr_idx,
+               &val_idx,
+               &best_gini);
+
+    std::cout << "best_attr_idx = " << best_attr_idx << std::endl;
+    std::cout << "val_idx = " << val_idx << std::endl;
+    std::cout << "best_gini = " << best_gini << std::endl;
+
+
+    // Free all the memory
     for (int i = 0; i < p; i++) {
         free_from_device(attribute_value_list[i]);
         free_from_device(class_label_list[i]);
