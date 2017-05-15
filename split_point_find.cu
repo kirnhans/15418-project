@@ -25,8 +25,10 @@ __global__ void check_if_split(double* attribute_values,
         return;
     } else if (idx == n - 1) {
         result[idx] = 1;
+        //printf("idx: %d, setting results[%d] = 1\n", idx, idx);
     } else {
         result[idx] = attribute_values[idx] != attribute_values[idx + 1] ? 1 : 0;
+        //printf("idx: %d, setting results[%d] = %d\n", idx, result[idx]);
     }
 }
 
@@ -101,7 +103,7 @@ void find_split(double** attribute_value_list,
                 int* best_attr,
                 int* split_idx,
                 double* best_gini) {
-    std::cout << "in find split" << std::endl;
+    //std::cout << "in find split" << std::endl;
 
     double min_gini = 1.0;
     int p_idx = -1;
@@ -118,14 +120,14 @@ void find_split(double** attribute_value_list,
     cudaMalloc((void**)&addr_i, n * sizeof(int));
     thrust::device_ptr<int> device_addr_i(addr_i);
 
-    std::cout << "begin loop over params" << std::endl;
+    //std::cout << "begin loop over params" << std::endl;
     for (int i = 0; i < p; i++) {
         thrust::device_ptr<int> device_class_label_list(class_label_list[i]);
         thrust::inclusive_scan(device_class_label_list,
                                device_class_label_list + n,
                                device_ci);
 
-        std::cout << "check if split kernel" << std::endl;
+        //std::cout << "check if split kernel" << std::endl;
         const int blocks = UPDIV(N, THREADS_PER_BLOCK);
         check_if_split<<<blocks, THREADS_PER_BLOCK>>>(attribute_value_list[i],
                                                       n,
@@ -133,20 +135,32 @@ void find_split(double** attribute_value_list,
 
         cudaThreadSynchronize();
 
-        std::cout << "scan is_split" << std::endl;
+        //std::cout << "scan is_split" << std::endl;
+
+        /*
+        int* test = new int[n];
+        cudaMemcpy(test, is_split_pt, n * sizeof(int), cudaMemcpyDeviceToHost);
+
+        for (int j = 0; j < n; j++) {
+            std::cout << "is_split_pt[" << j << "] = " << test[j] << std::endl;
+        }
+        delete[] test;
+*/
+
+
         thrust::device_ptr<int> device_is_split_pt(is_split_pt);
         thrust::inclusive_scan(device_is_split_pt,
                                device_is_split_pt + n,
                                device_addr_i);
 
-        std::cout << "get count" << std::endl;
+        //std::cout << "get count" << std::endl;
         int* buffer;
         int* buffer_idx;
         int size = thrust::count(device_is_split_pt, device_is_split_pt + n, 1);
         cudaMalloc((void**)&buffer, size * sizeof(int));
         cudaMalloc((void**)&buffer_idx, size * sizeof(int));
 
-        std::cout << "compact" << std::endl;
+        //std::cout << "compact" << std::endl;
         compact(c_i,
                 is_split_pt,
                 addr_i,
@@ -155,7 +169,7 @@ void find_split(double** attribute_value_list,
                 size,
                 n);
 
-        std::cout << "gini index calculate" << std::endl;
+        //std::cout << "gini index calculate" << std::endl;
         double* values;
         cudaMalloc((void**)&values, size * sizeof(double));
         calculate_gini<<<blocks, THREADS_PER_BLOCK>>>(buffer,
@@ -167,7 +181,7 @@ void find_split(double** attribute_value_list,
         cudaThreadSynchronize();
 
 
-        std::cout << "find min gini" << std::endl;
+        //std::cout << "find min gini" << std::endl;
         thrust::device_ptr<double> device_values(values);
         thrust::device_ptr<double> min_ptr = thrust::min_element(device_values, device_values + size);
 

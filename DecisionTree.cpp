@@ -121,7 +121,7 @@ void DecisionTree::deleteTree(node* t) {
 }
 
 void DecisionTree::train() {
-    std::cout << "start training" << std::endl;
+    //std::cout << "start training" << std::endl;
     data_to_device(&device_data, train_data, n * p);
     data_to_device(&device_labels, train_y, n);
 
@@ -151,12 +151,12 @@ void DecisionTree::train() {
     root->class_label_list = class_label_list;
     root->rid_list = rid_list;
 
-    std::cout << "grow root" << std::endl;
+    //std::cout << "grow root" << std::endl;
     grow(root);
 }
 
 void DecisionTree::grow(node* t) {
-    std::cout << "start grow" << std::endl;
+    //std::cout << "start grow" << std::endl;
     if (t->size == 1 || t->is_terminal == 1) {
         t->is_terminal = 1;
         return;
@@ -166,7 +166,7 @@ void DecisionTree::grow(node* t) {
     int val_idx;
     double best_gini;
 
-    std::cout << "find split" << std::endl;
+    //std::cout << "find split" << std::endl;
 
     find_split(t->attribute_value_list,
                t->class_label_list,
@@ -181,9 +181,9 @@ void DecisionTree::grow(node* t) {
     t->split_val_idx = val_idx;
     t->impurity = best_gini;
 
-    std::cout << "best_attr_idx = " << best_attr_idx << std::endl;
-    std::cout << "val_idx = " << val_idx << std::endl;
-    std::cout << "best_gini = " << best_gini << std::endl;
+    //std::cout << "best_attr_idx = " << best_attr_idx << std::endl;
+    //std::cout << "val_idx = " << val_idx << std::endl;
+    //std::cout << "best_gini = " << best_gini << std::endl;
 
     double** right_attribute_value_list = new double*[p];
     int** right_class_label_list = new int*[p];
@@ -196,7 +196,7 @@ void DecisionTree::grow(node* t) {
     int right_n;
     int left_n;
 
-    std::cout << "split lists" << std::endl;
+    //std::cout << "split lists" << std::endl;
     split_attribute_list(t->attribute_value_list,
                          t->class_label_list,
                          t->rid_list,
@@ -215,10 +215,10 @@ void DecisionTree::grow(node* t) {
 
 
     if (right_n > 0) {
-        std::cout << "grow right" << std::endl;
+        //std::cout << "grow right" << std::endl;
         t->right = new node();
 
-        if (right_n <= 1 || best_gini < 0.0000001) {
+        if (right_n <= 1 || best_gini < 0.04) {
             t->right->is_terminal = 1;
         }
 
@@ -227,14 +227,16 @@ void DecisionTree::grow(node* t) {
         t->right->rid_list = right_rid_list;
         t->right->size = right_n;
 
+        //std::cout << "right size = " << right_n << std::endl;
+
         grow(t->right);
     }
 
     if (left_n > 0) {
-        std::cout << "grow left" << std::endl;
+        //std::cout << "grow left" << std::endl;
         t->left = new node();
 
-        if (left_n <= 1 || best_gini < 0.0000001) {
+        if (left_n <= 1 || best_gini < 0.04) {
             t->left->is_terminal = 1;
         }
 
@@ -242,6 +244,8 @@ void DecisionTree::grow(node* t) {
         t->left->class_label_list = left_class_label_list;
         t->left->rid_list = left_rid_list;
         t->left->size = left_n;
+
+        //std::cout << "left size = " << left_n << std::endl;
 
         grow(t->left);
     }
