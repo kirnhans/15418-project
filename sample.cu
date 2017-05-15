@@ -14,13 +14,7 @@
 
 #include "CycleTimer.h"
 
-#define N (513)
-#define P (9)
-#define SQRT_P (3)
-#define NUM_BLOCKS (3)
-#define THREADS_PER_BLOCK 1024
-#define BLOCKSIZE (1024)
-#define UPDIV(N, threadsPerBlock) (((N) + (threadsPerBlock) - 1) / (threadsPerBlock))
+#include "macros.h"
 
 
 // From http://cs.umw.edu/~finlayson/class/fall16/cpsc425/notes/cuda-random.html
@@ -81,4 +75,3 @@ void bootstrap_sample(double* in_data,
     cudaThreadSynchronize();
     cudaFree(device_idx);
 }
-
