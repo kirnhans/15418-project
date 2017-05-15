@@ -13,19 +13,6 @@
 #include "DataReader.h"
 
 int main(int argc, char** argv) {
-
-    //cancer dataset
-    std::string train_file("data/cancer/cancer_train.csv");
-    std::string test_file("data/cancer/cancer_test.csv");
-
-    // Training and testing data set sizes
-    int n_train = 513;
-    int n_test = 172;
-
-    // Number of columns in data.
-    int p = 10;
-
-
     // Set RF defaults:
     int ntree = 500;
 
@@ -40,6 +27,17 @@ int main(int argc, char** argv) {
     int seed = 1995;
 
 
+    //cancer dataset
+     std::string train_file("data/cancer/cancer_train.csv");
+    std::string test_file("data/cancer/cancer_test.csv");
+
+    // Training and testing data set sizes
+    int n_train = 513;
+    int n_test = 172;
+
+    // Number of columns in data.
+    int p = 10;
+
     //loan dataset
     /*std::string train_file("data/loan/loan_train.csv");
     std::string test_file("data/loan/loan_test.csv");
@@ -49,8 +47,18 @@ int main(int argc, char** argv) {
     int n_test = 221721;
 
     // Number of columns in data.
-    int p = 16;*/
+    int p = 13;
 
+    //marketing dataset
+    std::string train_file("data/marketing/bank_train.csv");
+    std::string test_file("data/marketing/bank_test.csv");
+
+    // Training and testing data set sizes
+    int n_train = 33909;
+    int n_test = 11304;
+
+    // Number of columns in data.
+    int p = 6;*/
 
     // Read in the training data
     DataReader *train_reader = new DataReader();
