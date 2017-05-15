@@ -7,7 +7,7 @@ test_fn <- "../data/marketing/bank_test.csv"
 train <- read_csv(train_fn)
 test <- read_csv(test_fn)
 
-cat_var <- c("job", "marital", "education", "default", "housing", "loan", 
+cat_var <- c("job", "marital", "education", "default", "housing", "loan",
              "contact", "poutcome", "month")
 
 # Code categorical variables as factors.
@@ -18,15 +18,14 @@ for (p in cat_var) {
 
 # Parameters for random forest.
 # TODO make these optional command line arguments.
-n <- 500
-leaf_n <- 75
+n <- 1
 set.seed(1995)
 
 # Train.
 y_idx <- which(colnames(train) == "y")
 train_start <- Sys.time()
 forest <- randomForest(x = train[,-y_idx], y = factor(train$y),
-                       nodesize = leaf_n, ntree = n)
+                       replace = FALSE, sampsize = nrow(train), ntree = n)
 train_end <- Sys.time()
 
 # Training time in seconds.

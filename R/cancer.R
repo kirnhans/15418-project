@@ -9,15 +9,14 @@ test <- read_csv(test_fn)
 
 # Parameters for random forest.
 # TODO make these optional command line arguments.
-n <- 500
-leaf_n <- 75
+n <- 1
 set.seed(1995)
 
 # Train.
 y_idx <- which(colnames(train) == "y")
 train_start <- Sys.time()
 forest <- randomForest(x = train[,-y_idx], y = factor(train$y),
-                       nodesize = leaf_n, ntree = n)
+                       ntree = n, replace = FALSE, sampsize = nrow(train))
 train_end <- Sys.time()
 
 # Training time in seconds.
@@ -45,7 +44,7 @@ print("**************R randomForest**************")
 print("Cancer data:")
 print(sprintf("Test MSE: %f", mse))
 print(sprintf("Test misclassification rate: %f", mis_rate))
-print(sprintf("Train Time: %f %s", train_time, 
+print(sprintf("Train Time: %f %s", train_time,
               units(train_end - train_start)))
 print(sprintf("Predict time: %f %s", test_time,
               units(test_end - test_start)))
