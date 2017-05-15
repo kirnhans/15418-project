@@ -112,3 +112,36 @@ Looking forward to our final presentation, we plan on creating a slideshow using
 ## Concerning Issues
 We are concerned that we are behind schedule with the end of the semester approaching, but we think that we have set ourselves up for success by becoming more organized and making a more specific schedule. 
 
+
+# Final Report [5/15/17]
+
+## Summary
+Our project was parallelizing the machine learning algorithm Random Forest, scaled down to parallelizing its core component Decision Trees. We used CUDA architecture and ran the program on the GHC cluster machines. Our deliverable is parallel code for training decision trees written in CUDA and a comparison against Random Forest code written in Python and Sklearn.
+
+## Background
+Decision trees are a common classification method in statistics/machine learning. It takes as an input a training set and a testing set. A decision tree divides the training dataset based on the values of the attribute, e.g. age in the figure shown. Each node is divided into children based on a attribute’s value, e.g. age’s value of 9.5. The value is chosen to divide the dataset to maximize the separation of different classifications, e.g the separation of died and survived. This is called splitting a node.
+
+![Decision Tree]
+(https://upload.wikimedia.org/wikipedia/commons/f/f3/CART_tree_titanic_survivors.png)
+
+When we are training a tree, we have to determine the attributes and values on which to split nodes. Any attribute can be chosen and any potential value for the attribute can be chosen.
+To split a node, we calculate the Gini impurity from the resulting dataset, a measure that indicates the degree of variation. We want to minimize the Gini impurity. The options to calculate over are for each attribute, each value of the attribute, and all the datapoints in the training set for the attribute.
+
+After splitting the node, we split its children and repeat the process until we have very low impurity. The calculations are independent for each subtree. 
+Calculating impurity is also independent for each attribute for a given node. Each level however, is completely dependent on the previous level. This calculation is data parallel and probably amenable to SIMD execution. There is little locality because of the independence of the subset for each tree and the randomness of the rows of a single subset.
+
+## Approach
+
+
+## Results
+
+
+## References
+1. CUDT: https://www.hindawi.com/journals/tswj/2014/745640/
+1. SPRINT: http://www.vldb.org/conf/1996/P544.PDF	
+1. CSV parsing: https://github.com/ben-strasser/fast-cpp-csv-parser
+1. CUDA: 418 Homework 2 starter code
+1. Images:
+ 1. https://en.wikipedia.org/wiki/Decision_tree_learning
+ 1. https://www.hindawi.com/journals/tswj/2014/745640/
+
