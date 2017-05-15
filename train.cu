@@ -12,12 +12,7 @@
 
 #include "CycleTimer.h"
 
-#define N (513)
-#define P (9)
-#define SQRT_P (3)
-#define NUM_BLOCKS (3)
-#define BLOCKSIZE (1024)
-#define UPDIV(N, threadsPerBlock) (((N) + (threadsPerBlock) - 1) / (threadsPerBlock))
+#include "macros.h"
 
 void data_to_device(double** device_input_data, double* input_data, int size) {
     cudaMalloc(device_input_data, sizeof(double) * size);
@@ -233,4 +228,3 @@ void find_split(int* data_mask,
     delete[] left_count;
     delete[] sizes;
 }
-

@@ -14,9 +14,7 @@
 
 #include "CycleTimer.h"
 
-#define N (513)
-#define THREADS_PER_BLOCK 1024
-#define UPDIV(n, threadsPerBlock) (((n) + (threadsPerBlock) - 1) / (threadsPerBlock))
+#include "macros.h"
 
 __global__ void check_if_split(double* attribute_values,
                           int n,

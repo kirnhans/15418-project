@@ -9,9 +9,7 @@
 #include <thrust/sort.h>
 #include <thrust/device_ptr.h>
 
-#define N (513)
-#define THREADS_PER_BLOCK 1024
-#define UPDIV(n, threadsPerBlock) ((n + threadsPerBlock - 1) / threadsPerBlock)
+#include "macros.h"
 
 // Use this function to allocate memory on device for all the attribute lists
 void init_attribute_list_memory(double** attribute_value_list,

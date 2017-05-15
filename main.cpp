@@ -13,8 +13,18 @@
 #include "DataReader.h"
 
 int main(int argc, char** argv) {
+
+    //cancer dataset
     std::string train_file("data/cancer/cancer_train.csv");
     std::string test_file("data/cancer/cancer_test.csv");
+
+    // Training and testing data set sizes
+    int n_train = 513;
+    int n_test = 172;
+
+    // Number of columns in data.
+    int p = 10;
+
 
     // Set RF defaults:
     int ntree = 500;
@@ -29,12 +39,18 @@ int main(int argc, char** argv) {
     // RNG seed
     int seed = 1995;
 
+
+    //loan dataset
+    /*std::string train_file("data/loan/loan_train.csv");
+    std::string test_file("data/loan/loan_test.csv");
+
     // Training and testing data set sizes
-    int n_train = 513;
-    int n_test = 172;
+    int n_train = 665158;
+    int n_test = 221721;
 
     // Number of columns in data.
-    int p = 10;
+    int p = 16;*/
+
 
     // Read in the training data
     DataReader *train_reader = new DataReader();
