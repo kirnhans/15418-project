@@ -190,6 +190,7 @@ The way that we partition each attribute list is first by finding the row indexe
 
 
 ![Split attribute list algorithm](https://raw.githubusercontent.com/kirnhans/15418-project/master/Split_attribute_list_algorithm.png)
+
 Source: https://www.hindawi.com/journals/tswj/2014/745640/alg5/
 
 _Note: We use thrust stable_partition to perform the partition operation._
@@ -221,6 +222,6 @@ A CPU might have been a better choice because some parts of the program were ame
 1. CSV parsing: https://github.com/ben-strasser/fast-cpp-csv-parser
 1. CUDA: 418 Homework 2 starter code
 1. Images:
- 1. https://en.wikipedia.org/wiki/Decision_tree_learning
- 1. https://www.hindawi.com/journals/tswj/2014/745640/
+	1. https://en.wikipedia.org/wiki/Decision_tree_learning
+	1. https://www.hindawi.com/journals/tswj/2014/745640/
 
