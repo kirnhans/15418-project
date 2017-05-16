@@ -134,16 +134,17 @@ We used CUDA to run our code on GPUs. Specifically, we implemented the decision 
 
 Here is a breakdown of the tasks assigned to the CPU and GPU.
 ![Tasks breakdown](https://www.hindawi.com/journals/tswj/2014/745640.fig.006.jpg)
+Source: https://www.hindawi.com/journals/tswj/2014/745640/fig2/
 
 From this diagram, we see that actually constructing the decision tree and performing classification is performed on the CPU. We specifically use the GPU for the heavy computation tasks like building the attribute lists, finding the best split point for a node, and splitting the data based on the best split point.
 
 On the CPU side, we implemented a standard sequential CART algorithm. We used the gini index as the split criterion, and we did not limit the tree depth. The general algorithm does as follows:
 
 Grow(tree):
-For all the data in this node, find the best split point (make call to device code)
-Generate a left child and right child by splitting the data at split point (make call to device code)
-If left child is not terminal, grow the left child
-If right child is not terminal, grow the right child
+* For all the data in this node, find the best split point (make call to device code)
+* Generate a left child and right child by splitting the data at split point (make call to device code)
+* If left child is not terminal, grow the left child
+* If right child is not terminal, grow the right child
 
 The result of this algorithm is a DecisionTree C++ object that can be evaluated on the CPU for performing classification.
 
@@ -152,6 +153,7 @@ Now we discuss the GPU code that aids building the decision tree. The CUDT algor
 Example: Here we have a data set that has 2 attributes: Age and Car type. Therefore, we split the dataset into 2 attribute lists. Each list has every value from the original dataset for that attribute, as well as the label and row number for that datapoint.
 
 ![Attribute List](https://www.hindawi.com/journals/tswj/2014/745640.fig.002.jpg/)
+Source: https://www.hindawi.com/journals/tswj/2014/745640/fig2/
 
 Another point to note is that each attribute list is sorted by the data value as a sort key. This will help calculate note splitting in parallel, as we will discuss later.
 
@@ -167,6 +169,26 @@ _Note: For sorting, we use the thrust stable_sort_by_key function._
 
 Once we have the data stored in attribute lists, we are able to calculate the best split point for the data. Because the data values in the attribute lists are sorted, we are able to consider splitting the data values list at a given index the same as splitting the node off that attribute. In order to calculate the Gini index of these possible splits, we use scan (parallel prefix-sum) on the list of class labels for counting the number of positive and negative data points that go into the left subtree. Specifically, index i of scan(class_labels) gives the number of positive data points that go into the left tree. This, along with the index number, size of the data array, and the final index of scan(class_labels) gives us enough information to calculate the Gini index for splitting on each value.
 
+![Split point algorithm](https://raw.githubusercontent.com/kirnhans/15418-project/master/Split_point_Algorithm.png)
+Source: https://www.hindawi.com/journals/tswj/2014/745640/alg4/
+
+_Note: We use thrust inclusive_scan for the scan operation and thrust min_element for the reduce operation._
+
+In addition, we remove duplicate attribute values by performing a compact operation. Removing duplicates is important because we need to make sure that we don’t have repeat values going onto separate sides of the decision tree.
+
+![Compact algorithm](https://raw.githubusercontent.com/kirnhans/15418-project/master/Compact_algorithm.png)
+Source: https://www.hindawi.com/journals/tswj/2014/745640/alg2/
+
+
+Once split points are computed, we need to actually split the attribute lists into the left subtree and right subtree. Because of the way that each attribute list is constructed, we can partition it so that the values that go in the left subtree are in the beginning of the array and the values that go into the right subtree are in the end of the array. This way we can just do some pointer arithmetic to point to the right subtree and left subtree data instead of having to copy the data or keep an extra list of indexes at each node.
+
+The way that we partition each attribute list is first by finding the row indexes of values in the left subtree. We can get this information from the attribute list of the attribute that we are splitting on. Then we just use this to create a mask for partitioning each attribute list.
+
+
+![Split attribute list algorithm](https://raw.githubusercontent.com/kirnhans/15418-project/master/Split_attribute_list_algorithm.png)
+Source: https://www.hindawi.com/journals/tswj/2014/745640/alg5/
+
+_Note: We use thrust stable_partition to perform the partition operation._
 
 
 ## Results
@@ -175,6 +197,7 @@ We measured speedup of our CUDA program against sklearn and python libraries. We
 Our baseline was single-threaded CPU code. The libraries in python and sklearn are commonly used for machine learning purposes, so they are the de facto standard.
 
 ![Image of results](https://raw.githubusercontent.com/kirnhans/15418-project/master/Results_graph.jpg)
+
 
 We generate different decision trees so our code is not entirely correct, and we are not convinced that our code is displaying accurate speedup for the second two datasets.
 
