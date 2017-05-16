@@ -2,6 +2,8 @@
 
 ## Kirn Hans (khans) and Sally McNichols (smcnicho)
 
+# Proposal
+
 ## Summary
 We are going to implement random forest on the NVIDIA GPUs in the GHC labs.
 
@@ -123,6 +125,8 @@ Decision trees are a common classification method in statistics/machine learning
 
 ![Decision Tree](https://upload.wikimedia.org/wikipedia/commons/f/f3/CART_tree_titanic_survivors.png)
 
+Source: https://en.wikipedia.org/wiki/Decision_tree_learning
+
 When we are training a tree, we have to determine the attributes and values on which to split nodes. Any attribute can be chosen and any potential value for the attribute can be chosen.
 To split a node, we calculate the Gini impurity from the resulting dataset, a measure that indicates the degree of variation. We want to minimize the Gini impurity. The options to calculate over are for each attribute, each value of the attribute, and all the datapoints in the training set for the attribute.
 
@@ -221,7 +225,5 @@ A CPU might have been a better choice because some parts of the program were ame
 1. SPRINT: http://www.vldb.org/conf/1996/P544.PDF	
 1. CSV parsing: https://github.com/ben-strasser/fast-cpp-csv-parser
 1. CUDA: 418 Homework 2 starter code
-1. Images:
-	1. https://en.wikipedia.org/wiki/Decision_tree_learning
-	1. https://www.hindawi.com/journals/tswj/2014/745640/
+1. Thrust: http://docs.nvidia.com/cuda/thrust/
 
