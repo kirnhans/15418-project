@@ -134,6 +134,7 @@ We used CUDA to run our code on GPUs. Specifically, we implemented the decision 
 
 Here is a breakdown of the tasks assigned to the CPU and GPU.
 ![Tasks breakdown](https://www.hindawi.com/journals/tswj/2014/745640.fig.006.jpg)
+
 Source: https://www.hindawi.com/journals/tswj/2014/745640/fig2/
 
 From this diagram, we see that actually constructing the decision tree and performing classification is performed on the CPU. We specifically use the GPU for the heavy computation tasks like building the attribute lists, finding the best split point for a node, and splitting the data based on the best split point.
@@ -153,6 +154,7 @@ Now we discuss the GPU code that aids building the decision tree. The CUDT algor
 Example: Here we have a data set that has 2 attributes: Age and Car type. Therefore, we split the dataset into 2 attribute lists. Each list has every value from the original dataset for that attribute, as well as the label and row number for that datapoint.
 
 ![Attribute List](https://www.hindawi.com/journals/tswj/2014/745640.fig.002.jpg/)
+
 Source: https://www.hindawi.com/journals/tswj/2014/745640/fig2/
 
 Another point to note is that each attribute list is sorted by the data value as a sort key. This will help calculate note splitting in parallel, as we will discuss later.
@@ -170,6 +172,7 @@ _Note: For sorting, we use the thrust stable_sort_by_key function._
 Once we have the data stored in attribute lists, we are able to calculate the best split point for the data. Because the data values in the attribute lists are sorted, we are able to consider splitting the data values list at a given index the same as splitting the node off that attribute. In order to calculate the Gini index of these possible splits, we use scan (parallel prefix-sum) on the list of class labels for counting the number of positive and negative data points that go into the left subtree. Specifically, index i of scan(class_labels) gives the number of positive data points that go into the left tree. This, along with the index number, size of the data array, and the final index of scan(class_labels) gives us enough information to calculate the Gini index for splitting on each value.
 
 ![Split point algorithm](https://raw.githubusercontent.com/kirnhans/15418-project/master/Split_point_Algorithm.png)
+
 Source: https://www.hindawi.com/journals/tswj/2014/745640/alg4/
 
 _Note: We use thrust inclusive_scan for the scan operation and thrust min_element for the reduce operation._
@@ -177,6 +180,7 @@ _Note: We use thrust inclusive_scan for the scan operation and thrust min_elemen
 In addition, we remove duplicate attribute values by performing a compact operation. Removing duplicates is important because we need to make sure that we don’t have repeat values going onto separate sides of the decision tree.
 
 ![Compact algorithm](https://raw.githubusercontent.com/kirnhans/15418-project/master/Compact_algorithm.png)
+
 Source: https://www.hindawi.com/journals/tswj/2014/745640/alg2/
 
 
@@ -202,7 +206,7 @@ Our baseline was single-threaded CPU code. The libraries in python and sklearn a
 We generate different decision trees so our code is not entirely correct, and we are not convinced that our code is displaying accurate speedup for the second two datasets.
 
 Our code is faster on larger datasets because once they have been copied over, they parallelize well and show the gains of GPU parallelism against the sequential CPU algorithms.
-Different datasets of the same size can affect workload because the impurity of the data set determines the time taken by training and testing. A dataset with more attributes is more likely to have more variation and thus more levels, so building the levels of the decision tree takes more time. Similarly, testing takes more time on this dataset.
+Different datasets of the same size can affect workload because the impurity of the data set determines the time taken by training and testing. A dataset with more attributes is more likely to have more variation and thus more levels, so building the levels of the decision tree takes more time.
 
 Our speedup is primarily limited by the overhead of copying data over to the GPUs. Every row in the dataset is likely to be in a subset used to train some tree and each GPU thread touches every tree, therefore, the entire dataset had to be copied over. For the smallest training set with 512 rows, it took 0.3 seconds just to copy over the data before training the trees, while the R implementation took 0.1 seconds to complete training overall.
 
