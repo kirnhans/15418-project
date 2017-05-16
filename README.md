@@ -133,7 +133,7 @@ Calculating impurity is also independent for each attribute for a given node. Ea
 We used CUDA to run our code on GPUs. Specifically, we implemented the decision tree training algorithm defined in the CUDT paper. This required implementing 3 main algorithms in CUDA: build attribute lists, find split points, and split attribute lists.
 
 Here is a breakdown of the tasks assigned to the CPU and GPU.
-![Tasks breakdown](https://www.hindawi.com/journals/tswj/2014/745640/fig6/)
+![Tasks breakdown](https://www.hindawi.com/journals/tswj/2014/745640.fig.006.jpg)
 
 From this diagram, we see that actually constructing the decision tree and performing classification is performed on the CPU. We specifically use the GPU for the heavy computation tasks like building the attribute lists, finding the best split point for a node, and splitting the data based on the best split point.
 
@@ -151,7 +151,7 @@ Now we discuss the GPU code that aids building the decision tree. The CUDT algor
 
 Example: Here we have a data set that has 2 attributes: Age and Car type. Therefore, we split the dataset into 2 attribute lists. Each list has every value from the original dataset for that attribute, as well as the label and row number for that datapoint.
 
-![Attribute List](https://www.hindawi.com/journals/tswj/2014/745640/fig2/)
+![Attribute List](https://www.hindawi.com/journals/tswj/2014/745640.fig.002.jpg/)
 
 Another point to note is that each attribute list is sorted by the data value as a sort key. This will help calculate note splitting in parallel, as we will discuss later.
 
@@ -167,12 +167,14 @@ _Note: For sorting, we use the thrust stable_sort_by_key function._
 
 Once we have the data stored in attribute lists, we are able to calculate the best split point for the data. Because the data values in the attribute lists are sorted, we are able to consider splitting the data values list at a given index the same as splitting the node off that attribute. In order to calculate the Gini index of these possible splits, we use scan (parallel prefix-sum) on the list of class labels for counting the number of positive and negative data points that go into the left subtree. Specifically, index i of scan(class_labels) gives the number of positive data points that go into the left tree. This, along with the index number, size of the data array, and the final index of scan(class_labels) gives us enough information to calculate the Gini index for splitting on each value.
 
+
+
 ## Results
 We measured speedup of our CUDA program against sklearn and python libraries. We ran our algorithm on three different pairs of training and testing datasets. The first set (cancer statistics) had a training set of 513 rows and a testing set of 172 rows, with 9 columns/attributes. The second set (loan statistics) had a training set of 656439 rows and a testing set of 221721 rows, with 13 columns/attributes. The third set (marketing statistics) had a training set of 33909 rows and testing set of 11304 rows, with 6 columns.
 
 Our baseline was single-threaded CPU code. The libraries in python and sklearn are commonly used for machine learning purposes, so they are the de facto standard.
 
-![Image of results]()
+![Image of results](https://raw.githubusercontent.com/kirnhans/15418-project/master/Results_graph.jpg)
 
 We generate different decision trees so our code is not entirely correct, and we are not convinced that our code is displaying accurate speedup for the second two datasets.
 
